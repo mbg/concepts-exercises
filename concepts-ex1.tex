@@ -1,0 +1,41 @@
+\documentclass{supervision} 
+
+\begin{document}
+	
+\newcommand{\course}{Concepts in Programming Languages}
+\newcommand{\week}{I}
+\newcommand{\topics}{}
+
+\begin{center}
+\LARGE {\textbf{\color{campurpledark} \course} }\\[-0.2cm]
+\Large \color{campurpledark} Exercise \week\footnote{Largly based on Andrew Rice's question set}\\
+{
+	\footnotesize Compiled on \input{date} using commit \input{commit}
+}
+\end{center}
+
+{\color{campurple}\hrule}
+
+\newcommand{\terminal}[1]{\texttt{\color{campurple}#1}}
+\newcommand{\bl}[1]{{\color{black}#1}}
+
+\vspace{0.5cm}
+
+% foreword goes here
+
+\begin{questions}
+
+%\section*{Section}
+\question Compare the motivations and innovations of LISP and Algol. You may wish to read chapters 3 and 5 of \textit{Concepts in Programming Languages} by Mitchell.
+\question For your favourite programming language, discuss the following points:
+\begin{parts}
+	\part What was the motivation for the language?
+    \part Does the language have a simple and unambiguous execution model?
+    \part Is the language design grounded in theory?
+\end{parts}
+\question Discuss what factors you consider important for successful language design. Justify your answer.
+\question Discuss and evaluate the typing disciplines of assembly (one of x86, ARM, MIPS, etc.), Javascript, C, ML, Haskell, Agda, and another language of your choice. Compare the advantages and disadvantages that their design impose on the programmer.
+\question Based on your programming experience, identify a motivation for the design of a new programming language. Describe how you would design this language. Justify your decisions.
+\question Compare the STG machine with the abstract machine used for LISP. 
+\end{questions}
+\end{document}
