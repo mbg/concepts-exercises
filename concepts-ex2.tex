@@ -1,0 +1,47 @@
+\documentclass{supervision} 
+
+\begin{document}
+	
+\newcommand{\course}{Concepts in Programming Languages}
+\newcommand{\week}{II}
+\newcommand{\topics}{}
+
+\begin{center}
+\LARGE {\textbf{\color{campurpledark} \course} }\\[-0.2cm]
+\Large \color{campurpledark} Exercise \week\\
+{
+	\footnotesize Compiled on \input{date} using commit \input{commit}
+}
+\end{center}
+
+{\color{campurple}\hrule}
+
+\newcommand{\terminal}[1]{\texttt{\color{campurple}#1}}
+\newcommand{\bl}[1]{{\color{black}#1}}
+
+\vspace{0.5cm}
+
+% foreword goes here
+
+\begin{questions}
+
+%\section*{Section}
+\question 
+\begin{parts}
+    \part For three different programming languages of your choice, give an example of a weakness in the type system, explaining how it leads to a runtime error.
+    \part Read up on Hindley-Milner style type inference\footnote{You should have some intuition for how this works based on your experience with ML, which uses HM-style type inference. Wikipedia is good for the formal definition, so is \url{http://www.cl.cam.ac.uk/~mbg28/publications/wsiw.pdf}} and show how to infer the type of:
+    \begin{displaymath}
+    \lambda f.\lambda g.\lambda x.f~(g~(f~x))
+    \end{displaymath}
+    \part Give an example of a term which cannot be typed using Hindley-Milner style type inference because it would require a rank-$n$ type where $n > 1$.
+\end{parts} 
+\question
+\begin{parts}
+    \part Using examples, explain the meaning of \emph{covariance}, \emph{contravariance}, and other related concepts.
+    \part Outline what features you would say are required from languages that describe themselves as object-oriented.
+    \part Outline what features you would say are required from languages that describe themselves as functional.
+    \part A researcher claims that object-oriented features can ``easily'' be modelled in most functional programming languages. Suggest how you might prove them wrong or support their claims.
+\end{parts}
+\question People often say that programs written in purely-functional programming languages are ``embarrassingly-parallel''. It follows that compilers for such languages should be able to automagically turn non-parallel programs into ones that are parallel and therefore more efficient. Discuss the correctness of these claims.
+\end{questions}
+\end{document}
