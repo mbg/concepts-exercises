@@ -20,6 +20,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \usepackage{titlesec}
 \usepackage{hyperref}
@@ -28,7 +29,7 @@
 %\usepackage{tikz-uml}
 \usepackage{mathpartir}
 \usetikzlibrary{matrix,decorations.pathmorphing,shapes,arrows,backgrounds,positioning}
-\usepackage{graphicx,xcolor}
+
 \usepackage{geometry}
 \usepackage{everysel}
 \usepackage[normalem]{ulem}

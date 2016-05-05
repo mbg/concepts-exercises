@@ -8,10 +8,7 @@
 
 \begin{center}
 \LARGE {\textbf{\color{campurpledark} \course} }\\[-0.2cm]
-\Large \color{campurpledark} Exercise \week\\
-{
-	\footnotesize Compiled on \input{date} using commit \input{commit}
-}
+\Large \color{campurpledark} Supervision \week: Contemporary Languages %The Curse of the Black Perl
 \end{center}
 
 {\color{campurple}\hrule}
@@ -21,7 +18,9 @@
 
 \vspace{0.5cm}
 
-% foreword goes here
+This supervision covers Parts B and C of the lectures. You should submit your answers to me ahead of the supervision.
+
+\emph{By the end of this supervision}: you should be familiar with the motivation behind types, different forms of type systems, the three different forms of polymorphism, module systems, and current trends in programming languages such as monads, GADTs, and dependent types.
 
 \begin{questions}
 
@@ -29,19 +28,117 @@
 \question 
 \begin{parts}
     \part For three different programming languages of your choice, give an example of a weakness in the type system, explaining how it leads to a runtime error.
-    \part Read up on Hindley-Milner style type inference\footnote{You should have some intuition for how this works based on your experience with ML, which uses HM-style type inference. Wikipedia is good for the formal definition, so is \url{http://www.cl.cam.ac.uk/~mbg28/publications/wsiw.pdf}} and show how to infer the type of:
+    \part What type would ML, Haskell, etc. infer for $\mathit{foo}$ below?:
     \begin{displaymath}
-    \lambda f.\lambda g.\lambda x.f~(g~(f~x))
+    \mathbf{let}~\mathit{foo} = \lambda f.\lambda g.\lambda x.f~(g~(f~x))
     \end{displaymath}
-    \part Give an example of a term which cannot be typed using Hindley-Milner style type inference because it would require a rank-$n$ type where $n > 1$.
+    \part Can the following definition be typed in ML or Haskell (no extensions)? Explain your answer. We assume that $\mathbf{true}$ is of type $\mathit{bool}$ and that $(e_0,e_1)$ constructs a pair of type $\tau_0 \times \tau_1$ where $\tau_0$ and $\tau_1$ are the types of $e_0$ and $e_1$ respectively.
+    \begin{displaymath}
+    \mathbf{let}~\mathit{bar} = \lambda f.(f~3,f~\mathbf{true})
+    \end{displaymath}
+    \part Consider the following piece of code in ML (from the slides):
+    \begin{verbatim}
+    val x = ref [];
+    x := 3 :: (!x);
+    x := true :: (!x);
+    print x;
+    \end{verbatim}
+    \begin{subparts}
+        \subpart This program will not compile. In your own words, explain why ML requires the ``value restriction''.
+        \subpart In Haskell, the above could be written as:
+        \begin{displaymath}
+        \begin{array}{l}
+        \mathit{newIORef}~\hslist{} \bind \lambda x \to \\
+        \mathit{modifyIORef}~x~(\lambda \mathit{xs} \to 3 : \mathit{xs}) \bind \lambda \_ \to \\
+        \mathit{modifyIORef}~x~(\lambda \mathit{xs} \to \mathit{True} : \mathit{xs}) \bind \lambda \_ \to \\
+        \mathit{readIORef}~x \bind
+        \mathit{print}
+        \end{array}
+        \end{displaymath}
+        Note that we have the following typings\footnote{The type of $\mathit{print}$ is actually $\mathit{Show}~a \Rightarrow a \to \mathit{IO}~()$ but we ignore this for simplicity, since it is not relevant here.}:
+        \begin{displaymath}
+        \begin{array}{lcl}
+        \mathit{newIORef} & :: & a \to \mathit{IO}~(\mathit{IORef}~a) \\
+        \mathit{modifyIORef} & :: & \mathit{IORef}~a \to (a \to a) \to \mathit{IO}~() \\
+        \mathit{readIORef} & :: & \mathit{IORef}~a \to \mathit{IO}~a \\
+        \mathit{print} & :: & a \to \mathit{IO}~()
+        \end{array}
+        \end{displaymath}
+        This program also will not compile. However, Haskell does not require the ``value restriction''. Why is that?
+    \end{subparts}
 \end{parts} 
 \question
 \begin{parts}
-    \part Using examples, explain the meaning of \emph{covariance}, \emph{contravariance}, and other related concepts.
-    \part Outline what features you would say are required from languages that describe themselves as object-oriented.
-    \part Outline what features you would say are required from languages that describe themselves as functional.
-    \part A researcher claims that object-oriented features can ``easily'' be modelled in most functional programming languages. Suggest how you might prove them wrong or support their claims.
+    \part Using suitable examples, explain the meaning of \emph{covariance}, \emph{contravariance}, and \emph{invariance}.
+    \part In the presence of subtyping, why do \emph{downcasts} require some form of dynamic type checking?
+\end{parts}  
+\question
+\begin{parts}
+    \part A programmer is trying to implement a set data structure in ML. He defines a type of sets $'a~\mathit{set}$ where $'a$ type of elements in the set. He also defines standard functions to manipulate sets, including the following:
+    \begin{displaymath}
+    \begin{array}{lcl}
+    \mathit{insert} & : & ({'a} \to {'a} \to \mathit{bool}) \to {'a} \to {'a}~\mathit{set} \to {'a}~\mathit{set} \\
+    \mathit{delete} & : & ({'a} \to {'a} \to \mathit{bool}) \to {'a} \to {'a}~\mathit{set} \to {'a}~\mathit{set}
+    \end{array}
+    \end{displaymath}
+    The functions are parameterised over a function of type ${'a} \to {'a} \to \mathit{bool}$ which is used to determine equality between two elements of type $'a$.
+    
+    What are some potential problems with this design?
+\part How could ML functors be used to improve this set library?
+\part Haskell type classes are used for ad-hoc overloading of polymorphic functions. For example, consider the $\mathit{Eq}$ type class which is the class of all types that have a notion of equality:
+\begin{displaymath}
+\begin{array}{l}
+\mathbf{class}~\mathit{Eq}~\mathit{a}~\mathbf{where} \\
+\quad \begin{array}{lcl}
+(==) & :: & a \to a \to \mathit{Bool}
+\end{array}
+\end{array}
+\end{displaymath}
+A type class is essentially an interface: it describes which functions should be implemented for a type that has a certain property. Given that $\mathit{Eq}$ is the class of types which have a notion of equality, we can read the above as: some type $a$ has a notion of equality if it implements an operator $==$ of type $a \to a \to \mathit{Bool}$.
+
+In order to tell the Haskell compiler that some type is a member of a class of types, a type class instance must be given. For example, to show that the $\mathit{Bool}$ type has a notion of equality, we write the following:
+\begin{displaymath}
+\begin{array}{l}
+\mathbf{instance}~\mathit{Eq}~\mathit{Bool}~\mathbf{where} \\
+\quad \begin{array}{lclcl}
+\mathit{True} & == & \mathit{True} & = & \mathit{True} \\
+\mathit{False} & == & \mathit{False} & = & \mathit{True} \\
+\_ & == & \_ & = & \mathit{False}
+\end{array}
+\end{array}
+\end{displaymath}
+This defines equality of values of type $\mathit{Bool}$. Polymorphic functions can make use of \emph{type class constraints}. While universally-quantified type variables normally range over all types, type class constraints can be used to constrain them to only those types which are members of a certain type class. For example, for our running example of a set library, we could give the following typings in which the type of set elements $a$ is constrained to only those which have a notion of equality which can then be used by the functions' implementations:
+\begin{displaymath}
+\begin{array}{lcl}
+\mathit{insert} & :: & \mathit{Eq}~a \Rightarrow a \to \mathit{Set}~a \to \mathit{Set}~a \\
+\mathit{delete} & :: & \mathit{Eq}~a \Rightarrow a \to \mathit{Set}~a \to \mathit{Set}~a
+\end{array}
+\end{displaymath}
+Discuss how this compares to ML's module system.
 \end{parts}
+\question A researcher claims that object-oriented features can ``easily'' be modelled in most functional programming languages. Suggest how you might prove them wrong or support their claims.
 \question People often say that programs written in purely-functional programming languages are ``embarrassingly-parallel''. It follows that compilers for such languages should be able to automagically turn non-parallel programs into ones that are parallel and therefore more efficient. Discuss the correctness of these claims.
+\question Discuss to what extent (if any) you think that GADTs are dependent types.
+
+%Below is a Haskell program which makes use of GADTs and ``data kinds'' to encode indexed vectors -- that is, vectors whose types are parameterised by their size:
+%\begin{displaymath}
+%\begin{array}{l}
+%\begin{array}{lcl}
+%\multicolumn{3}{l}{\texttt{\color{OliveGreen} -{}- A normal data type with two constructors}} \\
+%\mathbf{data}~\mathit{Nat} & = & \mathit{Zero} \mid \mathit{Succ}~\mathit{Nat}
+%\end{array} \\\\
+%\begin{array}{l}
+%\texttt{\color{OliveGreen} -{}- A GADT with two constructors and their types} \\
+%\mathbf{data}~\mathit{Vector}~a~n~\mathbf{where} \\
+%\quad \begin{array}{lcl}
+%\mathit{Empty} & :: & \mathit{Vector}~a~\mathit{Zero} \\
+%\mathit{Cons} & :: & a \to \mathit{Vector}~a~n \to \mathit{Vector}~a~(\mathit{Succ}~n)
+%\end{array}
+%\end{array} \\\\
+%\end{array}
+%\end{displaymath}
+%Note that Haskell's ``data kinds'' feature simply allows us to use types as kinds (kinds can be thought of as the ``types of types''): normally, when a type is given a type parameter, such as $a$ in the definition of $\mathit{Vector}$, it is of kind $\star$ meaning that it can be instantiated by any type (\emph{e.g.} things like $\mathit{Int}$, $\mathit{Bool}$, \emph{etc.}). However, ``data kinds'' allow us to introduce our own kinds! In this case, because we use $\mathit{Nat}$'s constructors as types in the typings of the constructors for $\mathit{Vector}$, the kind of $n$ is inferred as $\mathit{Nat}$ rather than $\star$. Consequently, $n$ must always be either $\mathit{Zero}$ or $\mathit{Succ}~m$ for some $m$ of kind $\mathit{Nat}$. This allows us to use type-level natural numbers.
+
+%Discuss to what extent (if any) you think that $\mathit{Vector}$ and GADTs in general are dependent types.
 \end{questions}
 \end{document}
